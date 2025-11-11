@@ -230,7 +230,7 @@ qQCReport(proj, pdfFile = "/home/mchere/scratch/GATA6_bulk-ATAC-seq_MCLW/qAlign_
 *Genome used:*
 
 ```bash
-
+/shares/domcke.dmls.uzh/genomes/mm10
 ```
 
 
