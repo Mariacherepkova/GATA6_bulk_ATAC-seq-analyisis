@@ -204,7 +204,7 @@ done
 
 2) For alignment:
 
-
+```bash
 Rscript -e '
 library(QuasR)
 proj <- qAlign(
@@ -215,7 +215,7 @@ proj <- qAlign(
 )
 qQCReport(proj, pdfFile = "/home/mchere/scratch/GATA6_bulk-ATAC-seq_MCLW/qAlign_QC_mm10.pdf")
 '
-
+```
 
 *Genome used:*
 
