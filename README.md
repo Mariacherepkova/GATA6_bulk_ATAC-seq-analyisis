@@ -22,7 +22,7 @@ eval "$(micromamba shell hook --shell bash)"
 ```
 
 
-1) Trimming + QC Environment (atac-trim)
+**1) Trimming + QC Environment (atac-trim)**
 
 
 ```bash
@@ -49,7 +49,7 @@ The Nextera adapter file used in trimming is automatically provided:
 ${CONDA_PREFIX}/share/trimmomatic/adapters/NexteraPE-PE.fa
 
 
-2) Reference Preparation Environment (refprep)
+**2) Reference Preparation Environment (refprep)**
 
 Used in: bowtie_index.sbatch.sh
 Tools required: bowtie-build + samtools
@@ -72,7 +72,7 @@ which bowtie-build
 samtools --version
 ```
 
-3) R + QuasR Alignment Environment (renv)
+**3) R + QuasR Alignment Environment (renv)**
 
 This env provides R and system libraries; R packages are tracked inside the project via renv.
 
@@ -103,7 +103,7 @@ renv::init()      # or renv::restore() if lockfile already exists
 renv::snapshot()
 ```
 
-3) MACS3 Environment for peak calling
+**4) MACS3 Environment for peak calling**
 
 ```bash
 mamba create -y -n macs3-env -c conda-forge python=3.10 samtools bedtools pip
@@ -114,7 +114,7 @@ pip install "macs3>=3.0.1"
 
 
 
-## Directory Structure
+## Directory Structure - NEEDS TO BE UPDATED
 ```bash
 GATA6_bulk-ATAC-seq/
 ├─ scripts/                     # sbatch scripts and helper scripts
@@ -143,7 +143,7 @@ Files location
 ```
 
 
-1) Trim reads
+**1) Trim reads**
 ```bash
 sbatch scripts/run_trimmomatic.sbatch.sh
 ```
@@ -153,12 +153,12 @@ sbatch scripts/run_trimmomatic.sbatch.sh
 sbatch run_trimmomatic_fastqc.sbatch.sh 
 ```
 
-2) Prepare bowtie index (if needed)
+**2) Prepare bowtie index (if needed)**
 ```bash
 sbatch scripts/bowtie_index.sbatch.sh /path/to/genome.fa
 ```
 
-3) Align reads with QuasR/Rbowtie
+**3) Align reads with QuasR/Rbowtie**
 
 Edit quasr_samples_full.tsv to list sample names and paired FASTQs.
 Run:
@@ -174,10 +174,10 @@ proj.rds alignment project
 alignment QC report (qAlign_QC_mm10.pdf)
 
 
-4) Peak calling,
+**4) Peak calling**
 
 
-5) merging, filtering, DE analysis
+**5) merging, filtering, DE analysis**
 
 Performed in R using Science Apps - scripts will be added later
 
