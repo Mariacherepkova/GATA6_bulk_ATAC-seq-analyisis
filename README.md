@@ -113,6 +113,14 @@ GATA6_bulk-ATAC-seq/
 
 
 ## Workflow Summary
+
+Files location 
+
+```bash
+/shares/domcke.dmls.uzh/external/data/Domcke_bulkATAC-seq
+```
+
+
 1) Trim reads
 ```bash
 sbatch scripts/run_trimmomatic.sbatch.sh
@@ -140,8 +148,113 @@ proj.rds alignment project
 alignment QC report (qAlign_QC_mm10.pdf)
 
 
-4) Peak calling, merging, filtering, DE analysis
+4) Peak calling,
+
+
+5) merging, filtering, DE analysis
 
 Performed in R using Science Apps - scripts will be added later
 
+## Specific parameters used
 
+1) For Trimmomatic:
+
+```bash
+# ---- Adapters from the environment ----
+ADAPTERS="${CONDA_PREFIX}/share/trimmomatic/adapters/NexteraPE-PE.fa"
+
+# ---- Threads ----
+THREADS="${SLURM_CPUS_PER_TASK:-8}"
+
+# ---- Run Trimmomatic ----
+for f1 in "${INDIR}"/bulk*R1.fastq.gz; do
+    [[ -e "$f1" ]] || { echo "No input files matched. Exiting."; exit 1; }
+
+    echo "Processing ${f1}"
+    f2="${f1/_R1/_R2}"
+
+    # Safe basenames and stems
+    b1="$(basename "$f1")"
+    b2="$(basename "$f2")"
+    s1="${b1%.fastq.gz}"
+    s2="${b2%.fastq.gz}"
+
+    # Output files
+    o1="${OUTDIR}/${s1}.trim.fastq.gz"
+    u1="${OUTDIR}/${s1}.trim.unpaired.fastq.gz"
+    o2="${OUTDIR}/${s2}.trim.fastq.gz"
+    u2="${OUTDIR}/${s2}.trim.unpaired.fastq.gz"
+
+    trimmomatic PE -threads "${THREADS}" \
+        "$f1" "$f2" \
+        "$o1" "$u1" \
+        "$o2" "$u2" \
+        ILLUMINACLIP:"${ADAPTERS}":2:30:10:1:true \
+        TRAILING:3 SLIDINGWINDOW:4:10 MINLEN:20
+done
+```
+
+
+```bash
+
+```
+
+
+
+
+2) For alignment:
+
+
+Rscript -e '
+library(QuasR)
+proj <- qAlign(
+  sampleFile = "quasr_samples_full.tsv",
+  genome     = "/shares/domcke.dmls.uzh/genomes/mm10/mm10.fa",
+  aligner    = "Rbowtie",
+  paired     = "fr"
+)
+qQCReport(proj, pdfFile = "/home/mchere/scratch/GATA6_bulk-ATAC-seq_MCLW/qAlign_QC_mm10.pdf")
+'
+
+
+*Genome used:*
+
+```bash
+
+```
+
+
+2) For peak calling:
+
+```bash
+# --- MACS3 settings for ATAC-seq (paired-end) ---
+# For paired-end ATAC, use -f BAMPE and no shifting (MACS uses fragment spans).
+# Genome: mm10 -> use -g mm
+QVAL=0.01
+
+# Loop over BAMs and call peaks individually
+for BAM in "${BAM_DIR}"/*.bam; do
+  # skip index files just in case
+  [[ "${BAM}" == *.bam ]] || continue
+
+  SAMPLE="$(basename "${BAM}" .bam)"
+  OUTDIR="${OUT_ROOT}/${SAMPLE}"
+  mkdir -p "${OUTDIR}"
+
+  echo "[$(date)] Calling peaks for ${SAMPLE}"
+  macs3 callpeak \
+    -t "${BAM}" \
+    -f BAMPE \
+    -g mm \
+    -n "${SAMPLE}" \
+    --outdir "${OUTDIR}" \
+    --keep-dup all \
+    -q "${QVAL}"
+
+  # Produce a narrowPeak BED sorted and indexed
+  if [ -f "${OUTDIR}/${SAMPLE}_peaks.narrowPeak" ]; then
+    sort -k1,1 -k2,2n "${OUTDIR}/${SAMPLE}_peaks.narrowPeak" > "${OUTDIR}/${SAMPLE}.narrowPeak.sorted.bed"
+    bgzip -f "${OUTDIR}/${SAMPLE}.narrowPeak.sorted.bed"
+    tabix -p bed "${OUTDIR}/${SAMPLE}.narrowPeak.sorted.bed.gz"
+  fi
+```
