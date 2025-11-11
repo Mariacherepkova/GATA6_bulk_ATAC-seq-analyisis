@@ -81,12 +81,17 @@ micromamba create -p /home/mchere/data/conda/envs/renv \
   -c conda-forge -c bioconda \
   r-base=4.4 r-devtools r-xml r-data.table r-rcpp r-rlang r-cli \
   bowtie samtools -y
-
 ```
 
 Activate:
 ```bash
 micromamba activate /home/mchere/data/conda/envs/renv
+```
+
+_This is what worked for Lena:_
+```bash
+micromamba create -p /home/lewolff/data/conda/envs/R_envr -c conda-forge -c bioconda r-base=4.4 r-devtools r-xml r-data.table r-rcpp r-rlang r-cli bioconductor-biocparallel bioconductor-biocgenerics bioconductor-genomicranges bioconductor-genomicalignments bioconductor-rsamtools bioconductor-rhtslib bioconductor-rtracklayer bioconductor-bsgenome bioconductor-genomicfeatures bioconductor-variantannotation bioconductor-genomicfiles bowtie samtools -y
+micromamba install -p /home/lewolff/data/conda/envs/R_envr -c conda-forge -c bioconda -y xz zlib bzip2 curl make gcc gxx
 ```
 
 Inside R (first setup only):
@@ -97,6 +102,17 @@ install.packages("renv")
 renv::init()      # or renv::restore() if lockfile already exists
 renv::snapshot()
 ```
+
+3) MACS3 Environment for peak calling
+
+```bash
+mamba create -y -n macs3-env -c conda-forge python=3.10 samtools bedtools pip
+mamba activate macs3-env
+pip install "macs3>=3.0.1"
+```
+
+
+
 
 ## Directory Structure
 ```bash
