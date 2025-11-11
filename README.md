@@ -9,6 +9,12 @@ Environments are managed with **micromamba** and R project reproducibility is co
 
 ## Environment Setup
 
+Before starting to set up the environments request the interactive session on cluster
+
+```bash
+srun --pty -n 1 -c 2 --time=02:00:00 --mem=32G bash -l
+```
+
 Load micromamba in your shell (add to `~/.bashrc` if not already present):
 
 ```bash
