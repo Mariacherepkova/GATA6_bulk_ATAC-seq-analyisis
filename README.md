@@ -131,7 +131,11 @@ Files location
 ```bash
 sbatch scripts/run_trimmomatic.sbatch.sh
 ```
-sbatch scripts/run_trimmomatic.sbatch.sh
+
+*This script also does FastQC before and after trimming:*
+```bash
+sbatch run_trimmomatic_fastqc.sbatch.sh 
+```
 
 2) Prepare bowtie index (if needed)
 ```bash
