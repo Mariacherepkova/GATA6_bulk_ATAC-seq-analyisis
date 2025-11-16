@@ -9,13 +9,14 @@ Environments are managed with **micromamba** and R project reproducibility is co
 
 ## Environment Setup
 
-Before starting to set up the environments request the interactive session on cluster
+Before starting to set up the environments request the interactive session on cluster. 
+For installing the environments it's better to request more memory and at least 2-3 h. Also, you can  use tmux to not loose the interactive session when loosing internet connection.
 
 ```bash
 srun --pty -n 1 -c 2 --time=02:00:00 --mem=32G bash -l
 ```
 
-Load micromamba in your shell (add to `~/.bashrc` if not already present):
+Load micromamba in your shell (add to `~/.bashrc` if not already present). Read ScienceCluster manual for more information.
 
 ```bash
 eval "$(micromamba shell hook --shell bash)"
@@ -71,6 +72,14 @@ Check:
 which bowtie-build
 samtools --version
 ```
+
+
+_Useful commands: _
+
+list installed environments: ```bash mamba -list env  ```
+
+
+
 
 **3) R + QuasR Alignment Environment (renv)**
 
